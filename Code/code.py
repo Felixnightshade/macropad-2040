@@ -1,7 +1,6 @@
 import asyncio
 import time
 
-# : )
 from adafruit_macropad import MacroPad
 
 macropad = MacroPad()
