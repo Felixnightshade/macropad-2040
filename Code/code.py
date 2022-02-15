@@ -1,3 +1,7 @@
+"""
+Formatted with Black.
+"""
+
 import asyncio
 import time
 
@@ -43,192 +47,78 @@ async def poll_encoder():
         await asyncio.sleep(0.04)
 
 
+def update_down():
+    global key_event
+    global down
+    if key_event.pressed:
+        down[key_event.key_number] = 1
+    if key_event.released:
+        down[key_event.key_number] = 0
+
+
+def macro_enable_hidden():
+    global macropad
+    macropad.keyboard.send(macropad.Keycode.F1)
+    time.sleep(0.008)
+    macropad.keyboard.send(macropad.Keycode.F)
+    time.sleep(0.008)
+    macropad.keyboard.send(macropad.Keycode.F1)
+
+
+def macro_single_tap():
+    global macropad
+    global key_event
+    global down
+    if key_event.pressed:
+        macropad.keyboard.release(macropad.Keycode.Z)
+        macropad.keyboard.press(macropad.Keycode.Z)
+    elif key_event.released:
+        if sum(down) == 0:
+            macropad.keyboard.release(macropad.Keycode.Z)
+
+
+def macro_empty():
+    pass
+
+
 async def handle_keys():
     global macropad
     global key_event
     global current_mode
     global down
+    # fmt: off
+    remaps = {
+        "osu! normal" : (
+            macropad.Keycode.ESCAPE,       macropad.Keycode.F2, macro_enable_hidden,
+            macropad.Keycode.GRAVE_ACCENT, Keycode.UP_ARROW,    Keycode.ENTER,
+            Keycode.LEFT_ARROW,            Keycode.DOWN_ARROW,  Keycode.RIGHT_ARROW,
+            macropad.Keycode.Z,            macropad.Keycode.X,  macropad.Keycode.SHIFT
+        ),
+        "osu! single" : (
+            remap_osu_normal[0], remap_osu_normal[1],  remap_osu_normal[2],
+            remap_osu_normal[3], remap_osu_normal[4],  remap_osu_normal[5],
+            remap_osu_normal[6], remap_osu_normal[7],  remap_osu_normal[8],
+            macro_single_tap,    macro_single_tap,     remap_osu_normal[11]
+        )
+    }
+    # fmt: on
+
     while True:
         if key_event:
-            if current_mode == "osu! normal":
-                if key_event.key_number == 11:  # Left shift
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.SHIFT)
-                        down[11] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.SHIFT)
-                        down[11] = 0
-                elif key_event.key_number == 10:  # Right key
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.X)
-                        down[10] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.X)
-                        down[10] = 0
-                elif key_event.key_number == 9:  # Left key
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.Z)
-                        down[9] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.Z)
-                        down[9] = 0
-                elif key_event.key_number == 8:  # Right arrow
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.RIGHT_ARROW)
-                        down[8] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.RIGHT_ARROW)
-                        down[8] = 0
-                elif key_event.key_number == 7:  # Down arrow
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.DOWN_ARROW)
-                        down[7] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.DOWN_ARROW)
-                        down[7] = 0
-                elif key_event.key_number == 6:  # Left arrow
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.LEFT_ARROW)
-                        down[6] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.LEFT_ARROW)
-                        down[6] = 0
-                elif key_event.key_number == 5:  # Enter
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.ENTER)
-                        down[5] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.ENTER)
-                        down[5] = 0
-                elif key_event.key_number == 4:  # Up arrow
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.UP_ARROW)
-                        down[4] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.UP_ARROW)
-                        down[4] = 0
-                elif key_event.key_number == 3:  # Restart map
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.GRAVE_ACCENT)
-                        down[3] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.GRAVE_ACCENT)
-                        down[3] = 0
-                elif key_event.key_number == 2:  # Enable hidden
-                    if key_event.pressed:
-                        macropad.keyboard.send(macropad.Keycode.F1)
-                        down[2] = 1
-                    elif key_event.released:
-                        macropad.keyboard.send(macropad.Keycode.F)
-                        macropad.keyboard.send(macropad.Keycode.F1)
-                        down[2] = 0
-                elif key_event.key_number == 1:  # Random map
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.F2)
-                        down[1] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.F2)
-                        down[1] = 0
-                elif key_event.key_number == 0:  # Pause and exit
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.ESCAPE)
-                        down[0] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.ESCAPE)
-                        down[0] = 0
-
-            if current_mode == "osu! single":
-                if key_event.key_number == 11:  # Left shift
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.SHIFT)
-                        down[11] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.SHIFT)
-                        down[11] = 0
-                elif key_event.key_number == 10:  # Left key
-                    if key_event.pressed:
-                        macropad.keyboard.release(macropad.Keycode.Z)
-                        macropad.keyboard.press(macropad.Keycode.Z)
-                        down[10] = 1
-                    elif key_event.released:
-                        if not down[9]:
-                            macropad.keyboard.release(macropad.Keycode.Z)
-                        down[10] = 0
-                elif key_event.key_number == 9:  # Right key
-                    if key_event.pressed:
-                        macropad.keyboard.release(macropad.Keycode.Z)
-                        macropad.keyboard.press(macropad.Keycode.Z)
-                        down[9] = 1
-                    elif key_event.released:
-                        if not down[10]:
-                            macropad.keyboard.release(macropad.Keycode.Z)
-                        down[9] = 0
-                elif key_event.key_number == 8:
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.DOWN_ARROW)
-                        down[8] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.DOWN_ARROW)
-                        down[8] = 0
-                elif key_event.key_number == 7:
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.UP_ARROW)
-                        down[7] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.UP_ARROW)
-                        down[7] = 0
-                elif key_event.key_number == 6:
-                    if key_event.pressed:
-                        down[6] = 1
-                    elif key_event.released:
-                        down[6] = 0
-                elif key_event.key_number == 5:
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.RIGHT_ARROW)
-                        down[5] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.RIGHT_ARROW)
-                        down[5] = 0
-                elif key_event.key_number == 4:  # Left
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.LEFT_ARROW)
-                        down[4] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.LEFT_ARROW)
-                        down[4] = 0
-                elif key_event.key_number == 3:  # Restart map
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.GRAVE_ACCENT)
-                        down[3] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.GRAVE_ACCENT)
-                        down[3] = 0
-                elif key_event.key_number == 2:  # Enable hidden
-                    if key_event.pressed:
-                        macropad.keyboard.send(macropad.Keycode.F1)
-                        down[2] = 1
-                    elif key_event.released:
-                        macropad.keyboard.send(macropad.Keycode.F)
-                        macropad.keyboard.send(macropad.Keycode.F1)
-                        down[2] = 0
-                elif key_event.key_number == 1:  # Random map
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.F2)
-                        down[1] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.F2)
-                        down[1] = 0
-                elif key_event.key_number == 0:  # Pause and exit
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.ESCAPE)
-                        down[0] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.ESCAPE)
-                        down[0] = 0
+            update_down()
+            if type(remaps[current_mode][key_event.key_number]) == int:
+                if key_event.pressed:
+                    macropad.keyboard.press(remaps[current_mode][key_event.key_number])
+                elif key_event.released:
+                    macropad.keyboard.release(
+                        remaps[current_mode][key_event.key_number]
+                    )
+            elif type(remaps[current_mode][key_event.key_number]) == function:
+                remaps[current_mode][key_event.key_number]()
 
             key_event == 0
 
-        await asyncio.sleep(0)
+        await asyncio.sleep(0.001)
 
 
 async def handle_encoder():
@@ -242,7 +132,7 @@ async def handle_encoder():
             text_lines[0].text = modes[encoder_value % len(modes)]
             text_lines.show()
 
-        await asyncio.sleep(0)
+        await asyncio.sleep(0.04)
 
 
 async def main():
