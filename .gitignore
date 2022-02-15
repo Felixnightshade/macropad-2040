@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Macropad 2040 specific entries
+boot_out.txt
+.metadata_never_index
+.fseventsd
+.Trash-1000
