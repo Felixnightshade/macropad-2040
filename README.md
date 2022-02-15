@@ -10,6 +10,6 @@ Mode switching using the rotary encoder.
 ### 1: osu! normal
 ESC | F2 | Macro for hidden
 :---:|:---:|:---:
-GRAVE | UP_ARROW | Nothing yet (macro for HR?)
+GRAVE | UP_ARROW | ENTER
 LEFT_ARROW | DOWN_ARROW | RIGHT_ARROW
 Z | X | SHIFT

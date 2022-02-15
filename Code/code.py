@@ -72,38 +72,40 @@ async def handle_keys():
                     elif key_event.released:
                         macropad.keyboard.release(macropad.Keycode.Z)
                         down[9] = 0
-                elif key_event.key_number == 8:  # Down arrow
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.DOWN_ARROW)
-                        down[8] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.DOWN_ARROW)
-                        down[8] = 0
-                elif key_event.key_number == 7:  # Up arrow
-                    if key_event.pressed:
-                        macropad.keyboard.press(macropad.Keycode.UP_ARROW)
-                        down[7] = 1
-                    elif key_event.released:
-                        macropad.keyboard.release(macropad.Keycode.UP_ARROW)
-                        down[7] = 0
-                elif key_event.key_number == 6:
-                    if key_event.pressed:
-                        down[6] = 1
-                    elif key_event.released:
-                        down[6] = 0
-                elif key_event.key_number == 5:  # Right arrow
+                elif key_event.key_number == 8:  # Right arrow
                     if key_event.pressed:
                         macropad.keyboard.press(macropad.Keycode.RIGHT_ARROW)
-                        down[5] = 1
+                        down[8] = 1
                     elif key_event.released:
                         macropad.keyboard.release(macropad.Keycode.RIGHT_ARROW)
-                        down[5] = 0
-                elif key_event.key_number == 4:  # Left arrow
+                        down[8] = 0
+                elif key_event.key_number == 7:  # Down arrow
+                    if key_event.pressed:
+                        macropad.keyboard.press(macropad.Keycode.DOWN_ARROW)
+                        down[7] = 1
+                    elif key_event.released:
+                        macropad.keyboard.release(macropad.Keycode.DOWN_ARROW)
+                        down[7] = 0
+                elif key_event.key_number == 6:  # Left arrow
                     if key_event.pressed:
                         macropad.keyboard.press(macropad.Keycode.LEFT_ARROW)
-                        down[4] = 1
+                        down[6] = 1
                     elif key_event.released:
                         macropad.keyboard.release(macropad.Keycode.LEFT_ARROW)
+                        down[6] = 0
+                elif key_event.key_number == 5:  # Enter
+                    if key_event.pressed:
+                        macropad.keyboard.press(macropad.Keycode.ENTER)
+                        down[5] = 1
+                    elif key_event.released:
+                        macropad.keyboard.release(macropad.Keycode.ENTER)
+                        down[5] = 0
+                elif key_event.key_number == 4:  # Up arrow
+                    if key_event.pressed:
+                        macropad.keyboard.press(macropad.Keycode.UP_ARROW)
+                        down[4] = 1
+                    elif key_event.released:
+                        macropad.keyboard.release(macropad.Keycode.UP_ARROW)
                         down[4] = 0
                 elif key_event.key_number == 3:  # Restart map
                     if key_event.pressed:
