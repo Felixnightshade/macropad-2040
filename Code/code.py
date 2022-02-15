@@ -13,20 +13,14 @@ key_event = macropad.keys.events.get()
 encoder_value = None
 modes = ("osu! normal", "osu! single")
 current_mode = None
-down = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-    6: 0,
-    7: 0,
-    8: 0,
-    9: 0,
-    10: 0,
-    11: 0,
-}
+# fmt: off
+down = [
+    0, 0, 0,
+    0, 0, 0,
+    0, 0, 0,
+    0, 0, 0
+]
+# fmt: on
 
 
 async def poll_keys():
@@ -58,11 +52,13 @@ def update_down():
 
 def macro_enable_hidden():
     global macropad
-    macropad.keyboard.send(macropad.Keycode.F1)
-    time.sleep(0.008)
-    macropad.keyboard.send(macropad.Keycode.F)
-    time.sleep(0.008)
-    macropad.keyboard.send(macropad.Keycode.F1)
+    global key_event
+    if key_event.pressed:
+        macropad.keyboard.send(macropad.Keycode.F1)
+        time.sleep(0.008)
+        macropad.keyboard.send(macropad.Keycode.F)
+        time.sleep(0.008)
+        macropad.keyboard.send(macropad.Keycode.F1)
 
 
 def macro_single_tap():
@@ -89,16 +85,16 @@ async def handle_keys():
     # fmt: off
     remaps = {
         "osu! normal" : (
-            macropad.Keycode.ESCAPE,       macropad.Keycode.F2, macro_enable_hidden,
-            macropad.Keycode.GRAVE_ACCENT, Keycode.UP_ARROW,    Keycode.ENTER,
-            Keycode.LEFT_ARROW,            Keycode.DOWN_ARROW,  Keycode.RIGHT_ARROW,
-            macropad.Keycode.Z,            macropad.Keycode.X,  macropad.Keycode.SHIFT
+            macropad.Keycode.ESCAPE,       macropad.Keycode.F2,         macro_enable_hidden,
+            macropad.Keycode.GRAVE_ACCENT, macropad.Keycode.UP_ARROW,   macropad.Keycode.ENTER,
+            macropad.Keycode.LEFT_ARROW,   macropad.Keycode.DOWN_ARROW, macropad.Keycode.RIGHT_ARROW,
+            macropad.Keycode.Z,            macropad.Keycode.X,          macropad.Keycode.SHIFT
         ),
         "osu! single" : (
-            remap_osu_normal[0], remap_osu_normal[1],  remap_osu_normal[2],
-            remap_osu_normal[3], remap_osu_normal[4],  remap_osu_normal[5],
-            remap_osu_normal[6], remap_osu_normal[7],  remap_osu_normal[8],
-            macro_single_tap,    macro_single_tap,     remap_osu_normal[11]
+            macropad.Keycode.ESCAPE,       macropad.Keycode.F2,         macro_enable_hidden,
+            macropad.Keycode.GRAVE_ACCENT, macropad.Keycode.UP_ARROW,   macropad.Keycode.ENTER,
+            macropad.Keycode.LEFT_ARROW,   macropad.Keycode.DOWN_ARROW, macropad.Keycode.RIGHT_ARROW,
+            macro_single_tap,              macro_single_tap,            macropad.Keycode.SHIFT
         )
     }
     # fmt: on
@@ -113,7 +109,7 @@ async def handle_keys():
                     macropad.keyboard.release(
                         remaps[current_mode][key_event.key_number]
                     )
-            elif type(remaps[current_mode][key_event.key_number]) == function:
+            else:
                 remaps[current_mode][key_event.key_number]()
 
             key_event == 0
