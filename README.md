@@ -13,3 +13,10 @@ ESC | F2 | Macro for hidden
 GRAVE | UP_ARROW | ENTER
 LEFT_ARROW | DOWN_ARROW | RIGHT_ARROW
 Z | X | SHIFT
+
+### 2: osu! single
+ESC | F2 | Macro for hidden
+:---:|:---:|:---:
+GRAVE | UP_ARROW | ENTER
+LEFT_ARROW | DOWN_ARROW | RIGHT_ARROW
+Z (special) | Z (special) | SHIFT
