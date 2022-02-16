@@ -11,7 +11,7 @@ macropad = MacroPad()
 text_lines = macropad.display_text(title="Mode")
 key_event = macropad.keys.events.get()
 encoder_value = None
-modes = ("osu! normal", "osu! single")
+modes = ("desktop nav", "osu! normal", "osu! single")
 current_mode = None
 # fmt: off
 down = [
@@ -73,6 +73,16 @@ def macro_single_tap():
             macropad.keyboard.release(macropad.Keycode.Z)
 
 
+def remap(keys=tuple):
+    global macropad
+    global key_event
+    for key in keys:
+        if key_event.pressed:
+            macropad.keyboard.press(key)
+        elif key_event.released:
+            macropad.keyboard.release(key)
+
+
 def macro_empty():
     pass
 
@@ -85,16 +95,22 @@ async def handle_keys():
     # fmt: off
     remaps = {
         "osu! normal" : (
-            macropad.Keycode.ESCAPE,       macropad.Keycode.F2,         macro_enable_hidden,
+            macropad.Keycode.ESCAPE,       macropad.Keycode.F2,        (macro_enable_hidden, ()),
             macropad.Keycode.GRAVE_ACCENT, macropad.Keycode.UP_ARROW,   macropad.Keycode.ENTER,
             macropad.Keycode.LEFT_ARROW,   macropad.Keycode.DOWN_ARROW, macropad.Keycode.RIGHT_ARROW,
             macropad.Keycode.Z,            macropad.Keycode.X,          macropad.Keycode.SHIFT
         ),
         "osu! single" : (
-            macropad.Keycode.ESCAPE,       macropad.Keycode.F2,         macro_enable_hidden,
+            macropad.Keycode.ESCAPE,       macropad.Keycode.F2,        (macro_enable_hidden, ()),
             macropad.Keycode.GRAVE_ACCENT, macropad.Keycode.UP_ARROW,   macropad.Keycode.ENTER,
             macropad.Keycode.LEFT_ARROW,   macropad.Keycode.DOWN_ARROW, macropad.Keycode.RIGHT_ARROW,
-            macro_single_tap,              macro_single_tap,            macropad.Keycode.SHIFT
+           (macro_single_tap, ()),        (macro_single_tap, ()),       macropad.Keycode.SHIFT
+        ),
+        "desktop nav" : (
+           (remap, (macropad.Keycode.GUI, macropad.Keycode.ONE)),       (remap, (macropad.Keycode.GUI, macropad.Keycode.TWO)),       (remap, (macropad.Keycode.GUI, macropad.Keycode.THREE)),
+           (remap, (macropad.Keycode.GUI, macropad.Keycode.FOUR)),      (remap, (macropad.Keycode.GUI, macropad.Keycode.UP_ARROW)),  (remap, (macropad.Keycode.GUI, macropad.Keycode.FIVE)),
+           (remap, (macropad.Keycode.GUI, macropad.Keycode.LEFT_ARROW)),(remap, (macropad.Keycode.GUI, macropad.Keycode.DOWN_ARROW)),(remap, (macropad.Keycode.GUI, macropad.Keycode.RIGHT_ARROW)),
+           (remap, (macropad.Keycode.GUI, macropad.Keycode.C)),          macropad.Keycode.SHIFT,                                      macropad.Keycode.ALT
         )
     }
     # fmt: on
@@ -109,8 +125,10 @@ async def handle_keys():
                     macropad.keyboard.release(
                         remaps[current_mode][key_event.key_number]
                     )
-            else:
-                remaps[current_mode][key_event.key_number]()
+            elif type(remaps[current_mode][key_event.key_number]) == tuple:
+                remaps[current_mode][key_event.key_number][0](
+                    remaps[current_mode][key_event.key_number][1]
+                )
 
             key_event == 0
 
