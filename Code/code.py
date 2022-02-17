@@ -11,7 +11,7 @@ macropad = MacroPad()
 text_lines = macropad.display_text(title="Mode")
 key_event = macropad.keys.events.get()
 encoder_value = None
-modes = ("desktop nav", "osu! normal", "osu! single")
+modes = ("osu! normal", "osu! single", "desktop nav")
 current_mode = None
 # fmt: off
 down = [
@@ -50,7 +50,7 @@ def update_down():
         down[key_event.key_number] = 0
 
 
-def macro_enable_hidden():
+def macro_enable_hidden(placeholder=None):
     global macropad
     global key_event
     if key_event.pressed:
@@ -61,7 +61,7 @@ def macro_enable_hidden():
         macropad.keyboard.send(macropad.Keycode.F1)
 
 
-def macro_single_tap():
+def macro_single_tap(placeholder=None):
     global macropad
     global key_event
     global down
